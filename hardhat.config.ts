@@ -24,7 +24,7 @@ const config: HardhatUserConfig = {
       accounts,
     },
     optimism_sepolia: {
-      url: "https://testnet.optimism.io",
+      url: "https://sepolia.optimism.io",
       accounts,
     },
   },
