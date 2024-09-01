@@ -384,7 +384,7 @@ describe("PlasmaDaTranslationHub", function () {
               CID_3
             ),
           },
-        ]
+        ],
       ]);
 
       {
@@ -445,5 +445,193 @@ describe("PlasmaDaTranslationHub", function () {
         expect(daCid3[0].cid).to.equal(CID_3);
       }
     });
+
+    it("Can't override existing submission", async function () {
+      const { hub } = await loadFixture(deployFixture);
+
+      await hub.write.delegatedSubmit([
+        signers[1].account!.address,
+        {
+          dataHash: DATA_HASH_1,
+          da: DA_1,
+          cid: CID_1,
+          signature: await signDelegatedSubmit(
+            signers[1],
+            hub.address,
+            DATA_HASH_1,
+            DA_1,
+            CID_1
+          ),
+        },
+      ]);
+
+      expect(
+        hub.write.submit([DATA_HASH_1, DA_1, CID_2], {
+          account: signers[1].account,
+        })
+      ).to.be.rejectedWith("DuplicatedSubmission()");
+
+      expect(
+        hub.write.delegatedSubmit([
+          signers[1].account!.address,
+          {
+            dataHash: DATA_HASH_1,
+            da: DA_1,
+            cid: CID_3,
+            signature: await signDelegatedSubmit(
+              signers[1],
+              hub.address,
+              DATA_HASH_1,
+              DA_1,
+              CID_3
+            ),
+          },
+        ])
+      ).to.be.rejectedWith("DuplicatedSubmission()");
+
+      const cid1 = await hub.read.translation([
+        signers[1].account!.address,
+        DATA_HASH_1,
+        DA_1,
+      ]);
+
+      expect(cid1).to.equal(CID_1);
+    });
+  });
+
+  describe("Extend", async function () {
+    it("Can extend 1 level", async () => {
+      const { hub } = await loadFixture(deployFixture);
+
+      await hub.write.submit([DATA_HASH_1, DA_1, CID_1], { account: signers[0].account });
+      await hub.write.submit([DATA_HASH_1, DA_2, CID_3], { account: signers[0].account });
+      await hub.write.submit([DATA_HASH_2, DA_2, CID_2], { account: signers[0].account });
+
+      await hub.write.extend([signers[0].account!.address], { account: signers[3].account });
+
+      {
+        const daCid1 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_1,
+        ]);
+        const daCid2 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_2,
+        ]);
+
+        expect(daCid1.length).to.equal(2);
+        expect(daCid2.length).to.equal(1);
+
+        expect(daCid1[0].da).to.equal(DA_1);
+        expect(daCid1[1].da).to.equal(DA_2);
+        expect(daCid2[0].da).to.equal(DA_2);
+
+        expect(daCid1[0].cid).to.equal(CID_1);
+        expect(daCid1[1].cid).to.equal(CID_3);
+        expect(daCid2[0].cid).to.equal(CID_2);
+      }
+
+      // Extending again will override the record respected to the data hash
+      await hub.write.submit([DATA_HASH_1, DA_1, CID_2], { account: signers[1].account });
+
+      await hub.write.extend([signers[1].account!.address], { account: signers[3].account });
+
+      {
+        const daCid1 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_1,
+        ]);
+        const daCid2 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_2,
+        ]);
+
+        expect(daCid1.length).to.equal(1);
+        expect(daCid2.length).to.equal(1);
+
+        expect(daCid1[0].da).to.equal(DA_1);
+        expect(daCid2[0].da).to.equal(DA_2);
+
+        expect(daCid1[0].cid).to.equal(CID_2);
+        expect(daCid2[0].cid).to.equal(CID_2);
+      }
+
+      // Record set in the account has the highest priority
+      await hub.write.submit([DATA_HASH_2, DA_1, CID_3], { account: signers[3].account });
+
+      {
+        const daCid1 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_1,
+        ]);
+        const daCid2 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_2,
+        ]);
+
+        expect(daCid1.length).to.equal(1);
+        expect(daCid2.length).to.equal(1);
+
+        expect(daCid1[0].da).to.equal(DA_1);
+        expect(daCid2[0].da).to.equal(DA_1);
+
+        expect(daCid1[0].cid).to.equal(CID_2);
+        expect(daCid2[0].cid).to.equal(CID_3);
+      }
+    })
+
+    it("Can extend multiple level", async () => {
+      const { hub } = await loadFixture(deployFixture);
+
+      await hub.write.submit([DATA_HASH_1, DA_1, CID_1], { account: signers[0].account });
+      await hub.write.extend([signers[0].account!.address], { account: signers[3].account });
+
+      {
+        const daCid1 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_1,
+        ]);
+
+        expect(daCid1.length).to.equal(1);
+        expect(daCid1[0].da).to.equal(DA_1);
+        expect(daCid1[0].cid).to.equal(CID_1);
+      }
+
+      await hub.write.submit([DATA_HASH_1, DA_1, CID_2], { account: signers[1].account });
+      await hub.write.extend([signers[1].account!.address], { account: signers[3].account });
+
+      {
+        const daCid1 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_1,
+        ]);
+
+        expect(daCid1.length).to.equal(1);
+        expect(daCid1[0].da).to.equal(DA_1);
+        expect(daCid1[0].cid).to.equal(CID_2);
+      }
+
+      await hub.write.submit([DATA_HASH_2, DA_2, CID_2], { account: signers[2].account });
+      await hub.write.extend([signers[2].account!.address], { account: signers[3].account });
+
+      {
+        const daCid1 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_1,
+        ]);
+        const daCid2 = await hub.read.get([
+          signers[3].account!.address,
+          DATA_HASH_2,
+        ]);
+
+        expect(daCid1.length).to.equal(1);
+        expect(daCid1[0].da).to.equal(DA_1);
+        expect(daCid1[0].cid).to.equal(CID_2);
+
+        expect(daCid2.length).to.equal(1);
+        expect(daCid2[0].da).to.equal(DA_2);
+        expect(daCid2[0].cid).to.equal(CID_2);
+      }
+    })
   });
 });
