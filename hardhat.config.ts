@@ -18,32 +18,32 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  // networks: {
-  //   optimism: {
-  //     url: process.env.RPC_URL!,
-  //     accounts,
-  //   },
-  //   optimism_sepolia: {
-  //     url: process.env.RPC_TESTNET_URL!,
-  //     accounts,
-  //   },
-  // },
-  // etherscan: {
-  //   apiKey: {
-  //     optimismSepolia: process.env.ETHERSCAN_API_KEY!,
-  //     optimisticEthereum: process.env.ETHERSCAN_API_KEY!,
-  //   },
-  //   customChains: [
-  //     {
-  //       network: "optimismSepolia",
-  //       chainId: 11155420,
-  //       urls: {
-  //           apiURL: "https://api-sepolia-optimism.etherscan.io/api",
-  //           browserURL: "https://sepolia-optimism.etherscan.io"
-  //       }
-  //     },
-  //   ]
-  // },
+  networks: {
+    optimism: {
+      url: "https://mainnet.optimism.io",
+      accounts,
+    },
+    optimism_sepolia: {
+      url: "https://testnet.optimism.io",
+      accounts,
+    },
+  },
+  etherscan: {
+    apiKey: {
+      optimismSepolia: process.env.ETHERSCAN_API_KEY!,
+      optimisticEthereum: process.env.ETHERSCAN_API_KEY!,
+    },
+    customChains: [
+      {
+        network: "optimismSepolia",
+        chainId: 11155420,
+        urls: {
+            apiURL: "https://api-sepolia-optimism.etherscan.io/api",
+            browserURL: "https://sepolia-optimism.etherscan.io"
+        }
+      },
+    ]
+  },
 };
 
 export default config;
