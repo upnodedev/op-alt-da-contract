@@ -4,7 +4,7 @@ import {
 } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
 import { ignition, network, viem } from "hardhat";
 import PlasmaDaTranslationHubModule from "../ignition/modules/PlasmaDaTranslationHub";
-import { WalletClient, namehash } from "viem";
+import { WalletClient, getAddress, namehash } from "viem";
 import { expect } from "chai";
 
 // Mock up data
@@ -497,9 +497,75 @@ describe("PlasmaDaTranslationHub", function () {
 
       expect(cid1).to.equal(CID_1);
     });
+
+    it("Invalid Signature", async function () {
+      const { hub } = await loadFixture(deployFixture);
+
+      expect(
+        hub.write.delegatedSubmit([
+          signers[1].account!.address,
+          {
+            dataHash: DATA_HASH_1,
+            da: DA_1,
+            cid: CID_1,
+            signature: await signDelegatedSubmit(
+              signers[0],
+              hub.address,
+              DATA_HASH_1,
+              DA_1,
+              CID_1
+            ),
+          },
+        ])
+      ).to.rejectedWith('InvalidSignature()')
+
+      expect(
+        hub.write.batchDelegatedSubmit([
+          signers[1].account!.address,
+          [
+            {
+              dataHash: DATA_HASH_1,
+              da: DA_1,
+              cid: CID_1,
+              signature: await signDelegatedSubmit(
+                signers[1],
+                hub.address,
+                DATA_HASH_1,
+                DA_1,
+                CID_1
+              ),
+            },
+            {
+              dataHash: DATA_HASH_2,
+              da: DA_2,
+              cid: CID_2,
+              signature: await signDelegatedSubmit(
+                signers[1],
+                hub.address,
+                DATA_HASH_2,
+                DA_2,
+                CID_2
+              ),
+            },
+            {
+              dataHash: DATA_HASH_1,
+              da: DA_2,
+              cid: CID_3,
+              signature: await signDelegatedSubmit(
+                signers[1],
+                hub.address,
+                DATA_HASH_1,
+                DA_2,
+                CID_3
+              ),
+            },
+          ],
+        ])
+      ).to.rejectedWith('InvalidSignature()');
+    })
   });
 
-  describe("Extend", async function () {
+  describe("Extend", () => {
     it("Can extend 1 level", async () => {
       const { hub } = await loadFixture(deployFixture);
 
@@ -508,6 +574,10 @@ describe("PlasmaDaTranslationHub", function () {
       await hub.write.submit([DATA_HASH_2, DA_2, CID_2], { account: signers[0].account });
 
       await hub.write.extend([signers[0].account!.address], { account: signers[3].account });
+
+      expect(await hub.read.getExtendedAddresses([signers[3].account!.address])).to.deep.equal([
+        getAddress(signers[0].account!.address),
+      ])
 
       {
         const daCid1 = await hub.read.get([
@@ -535,6 +605,11 @@ describe("PlasmaDaTranslationHub", function () {
       await hub.write.submit([DATA_HASH_1, DA_1, CID_2], { account: signers[1].account });
 
       await hub.write.extend([signers[1].account!.address], { account: signers[3].account });
+
+      expect(await hub.read.getExtendedAddresses([signers[3].account!.address])).to.deep.equal([
+        getAddress(signers[0].account!.address),
+        getAddress(signers[1].account!.address),
+      ])
 
       {
         const daCid1 = await hub.read.get([
@@ -598,11 +673,15 @@ describe("PlasmaDaTranslationHub", function () {
       }
 
       await hub.write.submit([DATA_HASH_1, DA_1, CID_2], { account: signers[1].account });
-      await hub.write.extend([signers[1].account!.address], { account: signers[3].account });
+      await hub.write.extend([signers[1].account!.address], { account: signers[2].account });
+
+      expect(await hub.read.getExtendedAddresses([signers[2].account!.address])).to.deep.equal([
+        getAddress(signers[1].account!.address),
+      ])
 
       {
         const daCid1 = await hub.read.get([
-          signers[3].account!.address,
+          signers[2].account!.address,
           DATA_HASH_1,
         ]);
 
@@ -613,6 +692,11 @@ describe("PlasmaDaTranslationHub", function () {
 
       await hub.write.submit([DATA_HASH_2, DA_2, CID_2], { account: signers[2].account });
       await hub.write.extend([signers[2].account!.address], { account: signers[3].account });
+
+      expect(await hub.read.getExtendedAddresses([signers[3].account!.address])).to.deep.equal([
+        getAddress(signers[0].account!.address),
+        getAddress(signers[2].account!.address),
+      ])
 
       {
         const daCid1 = await hub.read.get([
