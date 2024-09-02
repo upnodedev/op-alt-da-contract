@@ -69,19 +69,19 @@ describe("PlasmaDaTranslationHub", function () {
       await hub.write.submit([DATA_HASH_1, DA_2, CID_3]);
 
       {
-        const cid1 = await hub.read.translation([
+        const cid1 = await hub.read.get([
           signers[0].account!.address,
           DATA_HASH_1,
           DA_1,
         ]);
 
-        const cid2 = await hub.read.translation([
+        const cid2 = await hub.read.get([
           signers[0].account!.address,
           DATA_HASH_2,
           DA_2,
         ]);
 
-        const cid3 = await hub.read.translation([
+        const cid3 = await hub.read.get([
           signers[0].account!.address,
           DATA_HASH_1,
           DA_2,
@@ -91,11 +91,11 @@ describe("PlasmaDaTranslationHub", function () {
         expect(cid2).to.equal(CID_2);
         expect(cid3).to.equal(CID_3);
 
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[0].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[0].account!.address,
           DATA_HASH_2,
         ]);
@@ -137,19 +137,19 @@ describe("PlasmaDaTranslationHub", function () {
       ]);
 
       {
-        const cid1 = await hub.read.translation([
+        const cid1 = await hub.read.get([
           signers[0].account!.address,
           DATA_HASH_1,
           DA_1,
         ]);
 
-        const cid2 = await hub.read.translation([
+        const cid2 = await hub.read.get([
           signers[0].account!.address,
           DATA_HASH_2,
           DA_2,
         ]);
 
-        const cid3 = await hub.read.translation([
+        const cid3 = await hub.read.get([
           signers[0].account!.address,
           DATA_HASH_1,
           DA_2,
@@ -159,11 +159,11 @@ describe("PlasmaDaTranslationHub", function () {
         expect(cid2).to.equal(CID_2);
         expect(cid3).to.equal(CID_3);
 
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[0].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[0].account!.address,
           DATA_HASH_2,
         ]);
@@ -190,7 +190,7 @@ describe("PlasmaDaTranslationHub", function () {
         "DuplicatedSubmission()"
       );
 
-      const cid1 = await hub.read.translation([
+      const cid1 = await hub.read.get([
         signers[0].account!.address,
         DATA_HASH_1,
         DA_1,
@@ -266,25 +266,25 @@ describe("PlasmaDaTranslationHub", function () {
       ]);
 
       {
-        const cid1 = await hub.read.translation([
+        const cid1 = await hub.read.get([
           signers[1].account!.address,
           DATA_HASH_1,
           DA_1,
         ]);
 
-        const cid2 = await hub.read.translation([
+        const cid2 = await hub.read.get([
           signers[1].account!.address,
           DATA_HASH_2,
           DA_2,
         ]);
 
-        const cid3 = await hub.read.translation([
+        const cid3 = await hub.read.get([
           signers[1].account!.address,
           DATA_HASH_1,
           DA_2,
         ]);
 
-        const cid32 = await hub.read.translation([
+        const cid32 = await hub.read.get([
           signers[2].account!.address,
           DATA_HASH_1,
           DA_1,
@@ -295,15 +295,15 @@ describe("PlasmaDaTranslationHub", function () {
         expect(cid3).to.equal(CID_3);
         expect(cid32).to.equal(CID_3);
 
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[1].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[1].account!.address,
           DATA_HASH_2,
         ]);
-        const daCid3 = await hub.read.get([
+        const daCid3 = await hub.read.getAll([
           signers[2].account!.address,
           DATA_HASH_1,
         ]);
@@ -388,25 +388,25 @@ describe("PlasmaDaTranslationHub", function () {
       ]);
 
       {
-        const cid1 = await hub.read.translation([
+        const cid1 = await hub.read.get([
           signers[1].account!.address,
           DATA_HASH_1,
           DA_1,
         ]);
 
-        const cid2 = await hub.read.translation([
+        const cid2 = await hub.read.get([
           signers[1].account!.address,
           DATA_HASH_2,
           DA_2,
         ]);
 
-        const cid3 = await hub.read.translation([
+        const cid3 = await hub.read.get([
           signers[1].account!.address,
           DATA_HASH_1,
           DA_2,
         ]);
 
-        const cid32 = await hub.read.translation([
+        const cid32 = await hub.read.get([
           signers[2].account!.address,
           DATA_HASH_1,
           DA_1,
@@ -417,15 +417,15 @@ describe("PlasmaDaTranslationHub", function () {
         expect(cid3).to.equal(CID_3);
         expect(cid32).to.equal(CID_3);
 
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[1].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[1].account!.address,
           DATA_HASH_2,
         ]);
-        const daCid3 = await hub.read.get([
+        const daCid3 = await hub.read.getAll([
           signers[2].account!.address,
           DATA_HASH_1,
         ]);
@@ -489,7 +489,7 @@ describe("PlasmaDaTranslationHub", function () {
         ])
       ).to.be.rejectedWith("DuplicatedSubmission()");
 
-      const cid1 = await hub.read.translation([
+      const cid1 = await hub.read.get([
         signers[1].account!.address,
         DATA_HASH_1,
         DA_1,
@@ -580,11 +580,11 @@ describe("PlasmaDaTranslationHub", function () {
       ])
 
       {
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_2,
         ]);
@@ -599,6 +599,30 @@ describe("PlasmaDaTranslationHub", function () {
         expect(daCid1[0].cid).to.equal(CID_1);
         expect(daCid1[1].cid).to.equal(CID_3);
         expect(daCid2[0].cid).to.equal(CID_2);
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_1,
+            DA_1,
+          ])
+        ).to.equal(CID_1)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_1,
+            DA_2,
+          ])
+        ).to.equal(CID_3)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_2,
+            DA_2,
+          ])
+        ).to.equal(CID_2)
       }
 
       // Extending again will override the record respected to the data hash
@@ -612,11 +636,11 @@ describe("PlasmaDaTranslationHub", function () {
       ])
 
       {
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_2,
         ]);
@@ -629,17 +653,41 @@ describe("PlasmaDaTranslationHub", function () {
 
         expect(daCid1[0].cid).to.equal(CID_2);
         expect(daCid2[0].cid).to.equal(CID_2);
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_1,
+            DA_1,
+          ])
+        ).to.equal(CID_2)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_1,
+            DA_2,
+          ])
+        ).to.equal(CID_3)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_2,
+            DA_2,
+          ])
+        ).to.equal(CID_2)
       }
 
       // Record set in the account has the highest priority
       await hub.write.submit([DATA_HASH_2, DA_1, CID_3], { account: signers[3].account });
 
       {
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_2,
         ]);
@@ -652,6 +700,38 @@ describe("PlasmaDaTranslationHub", function () {
 
         expect(daCid1[0].cid).to.equal(CID_2);
         expect(daCid2[0].cid).to.equal(CID_3);
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_1,
+            DA_1,
+          ])
+        ).to.equal(CID_2)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_1,
+            DA_2,
+          ])
+        ).to.equal(CID_3)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_2,
+            DA_1,
+          ])
+        ).to.equal(CID_3)
+
+        expect(
+          await hub.read.get([
+            signers[3].account!.address,
+            DATA_HASH_2,
+            DA_2,
+          ])
+        ).to.equal(CID_2)
       }
     })
 
@@ -662,7 +742,7 @@ describe("PlasmaDaTranslationHub", function () {
       await hub.write.extend([signers[0].account!.address], { account: signers[3].account });
 
       {
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_1,
         ]);
@@ -680,7 +760,7 @@ describe("PlasmaDaTranslationHub", function () {
       ])
 
       {
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[2].account!.address,
           DATA_HASH_1,
         ]);
@@ -699,11 +779,11 @@ describe("PlasmaDaTranslationHub", function () {
       ])
 
       {
-        const daCid1 = await hub.read.get([
+        const daCid1 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_1,
         ]);
-        const daCid2 = await hub.read.get([
+        const daCid2 = await hub.read.getAll([
           signers[3].account!.address,
           DATA_HASH_2,
         ]);
