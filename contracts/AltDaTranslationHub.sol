@@ -5,11 +5,11 @@ import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 /**
- * @title PlasmaDaTranslationHub
- * @notice This contract manages the submission and verification of translation data using the Plasma Data Availability (DA) model.
+ * @title AltDaTranslationHub
+ * @notice This contract translates the Keccak256 commitment to the third-party data availability’s CID.
  * @dev Implements EIP-712 for signature verification and utilizes SignatureChecker for secure submission delegation.
  */
-contract PlasmaDaTranslationHub is EIP712 {
+contract AltDaTranslationHub is EIP712 {
     /// @notice Error thrown when a signature is invalid.
     error InvalidSignature();
 
@@ -75,12 +75,12 @@ contract PlasmaDaTranslationHub is EIP712 {
 
     /// @notice The type hash used for EIP-712 signature verification
     bytes32 private constant SUBMIT_TYPEHASH =
-        keccak256("PlasmaDaSubmit(bytes32 dataHash,bytes32 da,bytes cid)");
+        keccak256("AltDaSubmit(bytes32 dataHash,bytes32 da,bytes cid)");
 
     /**
-     * @notice Constructor initializing the PlasmaDaTranslationHub with EIP-712 domain separator.
+     * @notice Constructor initializing the AltDaTranslationHub with EIP-712 domain separator.
      */
-    constructor() EIP712("PlasmaDaTranslationHub", "1") {}
+    constructor() EIP712("AltDaTranslationHub", "1") {}
 
     /**
      * @notice Internal function to handle the submission of translation data.

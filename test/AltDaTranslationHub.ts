@@ -3,7 +3,7 @@ import {
   loadFixture,
 } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
 import { ignition, network, viem } from "hardhat";
-import PlasmaDaTranslationHubModule from "../ignition/modules/PlasmaDaTranslationHub";
+import AltDaTranslationHubModule from "../ignition/modules/AltDaTranslationHub";
 import { WalletClient, getAddress, namehash } from "viem";
 import { expect } from "chai";
 
@@ -17,7 +17,7 @@ const CID_2 = "0xabcdef1234";
 const CID_3 = "0xcdef1234";
 
 async function deployFixture() {
-  return ignition.deploy(PlasmaDaTranslationHubModule);
+  return ignition.deploy(AltDaTranslationHubModule);
 }
 
 async function signDelegatedSubmit(
@@ -30,19 +30,19 @@ async function signDelegatedSubmit(
   const signature = await signer.signTypedData({
     account: signer.account!.address,
     domain: {
-      name: "PlasmaDaTranslationHub",
+      name: "AltDaTranslationHub",
       version: "1",
       chainId: network.config.chainId,
       verifyingContract,
     },
     types: {
-      PlasmaDaSubmit: [
+      AltDaSubmit: [
         { name: "dataHash", type: "bytes32" },
         { name: "da", type: "bytes32" },
         { name: "cid", type: "bytes" },
       ],
     },
-    primaryType: "PlasmaDaSubmit",
+    primaryType: "AltDaSubmit",
     message: {
       dataHash,
       da,
@@ -53,7 +53,7 @@ async function signDelegatedSubmit(
   return signature;
 }
 
-describe("PlasmaDaTranslationHub", function () {
+describe("AltDaTranslationHub", function () {
   let signers: WalletClient[];
 
   before(async () => {
